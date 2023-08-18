@@ -2,7 +2,6 @@
 import logging
 
 from finam import Exporter, Market
-
 """
 Simply lists available markets and some samples out of them
 """
@@ -17,7 +16,9 @@ def main():
         print('{0.name:*^25}'.format(market))
         items = exporter.lookup(market=market)
         print('Total items: {}'.format(len(items)))
-        print('Sample: {}'.format(', '.join(items['code'][:SAMPLE_SIZE])))
+        l = len(items)
+        # print('Sample: {}'.format(', '.join(items['code'][:l])))
+        print('Sample: {}'.format(', '.join(items['code'])))
 
 
 if __name__ == '__main__':

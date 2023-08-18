@@ -10,14 +10,9 @@ from functools import partial
 import click
 from click_datetime import Datetime
 
-from finam import (Exporter,
-                   Timeframe,
-                   Market,
-                   FinamExportError,
+from finam import (Exporter, Timeframe, Market, FinamExportError,
                    FinamObjectNotFoundError)
 from finam.utils import click_validate_enum
-
-
 """
 Helper script to download a set of assets
 """
@@ -32,8 +27,8 @@ def _arg_split(ctx, param, value):
     try:
         items = value.split(',')
     except ValueError:
-        raise click.BadParameter('comma-separated {} is required, got {}'
-                                 .format(param, value))
+        raise click.BadParameter(
+            'comma-separated {} is required, got {}'.format(param, value))
     return items
 
 
@@ -54,33 +49,33 @@ def _arg_split(ctx, param, value):
 @click.option('--destdir',
               help='Destination directory name',
               required=True,
-              type=click.Path(exists=True, file_okay=False, writable=True,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              writable=True,
                               resolve_path=True))
 @click.option('--skiperr',
               help='Continue if a download error occurs. False by default',
               required=False,
               default=True,
               type=bool)
-@click.option('--lineterm',
-              help='Line terminator',
-              default='\r\n')
+@click.option('--lineterm', help='Line terminator', default='\r\n')
 @click.option('--delay',
               help='Seconds to sleep between requests',
               type=click.IntRange(0, 600),
               default=1)
-@click.option('--startdate', help='Start date',
+@click.option('--startdate',
+              help='Start date',
               type=Datetime(format='%Y-%m-%d'),
               default='2007-01-01',
               required=False)
-@click.option('--enddate', help='End date',
+@click.option('--enddate',
+              help='End date',
               type=Datetime(format='%Y-%m-%d'),
               default=datetime.date.today().strftime('%Y-%m-%d'),
               required=False)
-@click.option('--ext',
-              help='Resulting file extension',
-              default='csv')
-def main(contracts, market, timeframe, destdir, lineterm,
-         delay, startdate, enddate, skiperr, ext):
+@click.option('--ext', help='Resulting file extension', default='csv')
+def main(contracts, market, timeframe, destdir, lineterm, delay, startdate,
+         enddate, skiperr, ext):
     exporter = Exporter()
 
     if not any((contracts, market)):
@@ -107,6 +102,7 @@ def main(contracts, market, timeframe, destdir, lineterm,
             data = exporter.download(contract.id,
                                      start_date=startdate,
                                      end_date=enddate,
+                                     delay=delay,
                                      timeframe=Timeframe[timeframe],
                                      market=Market(contract.market))
         except FinamExportError as e:
@@ -115,8 +111,8 @@ def main(contracts, market, timeframe, destdir, lineterm,
                 continue
             else:
                 raise
-        destpath = os.path.join(destdir, '{}-{}.{}'
-                                .format(contract.code, timeframe, ext))
+        destpath = os.path.join(
+            destdir, '{}-{}.{}'.format(contract.code, timeframe, ext))
 
         data.to_csv(destpath, index=False, line_terminator=lineterm)
         if delay > 0:

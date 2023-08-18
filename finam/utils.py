@@ -7,10 +7,10 @@ from urllib.request import Request
 import click
 
 from .config import FINAM_CHARSET, FINAM_TRUSTED_USER_AGENT
-
+from collections.abc import Container
 
 def is_container(val):
-    return isinstance(val, collections.Container)\
+    return isinstance(val, Container)\
              and not isinstance(val, six.string_types) \
              and not isinstance(val, bytes)
 
